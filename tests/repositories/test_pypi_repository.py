@@ -54,31 +54,31 @@ class MockRepository(PyPiRepository):
         shutil.copyfile(str(fixture), dest)
 
 
-def test_find_packages():
+def test_find_packages(f):
     repo = MockRepository()
-    packages = repo.find_packages("requests", "^2.18")
+    packages = repo.find_packages(f.create_dependency("requests", "^2.18"))
 
     assert len(packages) == 5
 
 
-def test_find_packages_with_prereleases():
+def test_find_packages_with_prereleases(f):
     repo = MockRepository()
-    packages = repo.find_packages("toga", ">=0.3.0.dev2")
+    packages = repo.find_packages(f.create_dependency("toga", ">=0.3.0.dev2"))
 
     assert len(packages) == 7
 
 
-def test_find_packages_does_not_select_prereleases_if_not_allowed():
+def test_find_packages_does_not_select_prereleases_if_not_allowed(f):
     repo = MockRepository()
-    packages = repo.find_packages("pyyaml")
+    packages = repo.find_packages(f.create_dependency("pyyaml", "*"))
 
     assert len(packages) == 1
 
 
 @pytest.mark.parametrize("constraint,count", [("*", 1), (">=1", 0), (">=19.0.0a0", 1)])
-def test_find_packages_only_prereleases(constraint, count):
+def test_find_packages_only_prereleases(constraint, count, f):
     repo = MockRepository()
-    packages = repo.find_packages("black", constraint=constraint)
+    packages = repo.find_packages(f.create_dependency("black", constraint))
 
     assert len(packages) == count
 
@@ -89,7 +89,8 @@ def test_package():
     package = repo.package("requests", "2.18.4")
 
     assert package.name == "requests"
-    assert len(package.requires) == 4
+    assert len(package.requires) == 9
+    assert len([r for r in package.requires if r.is_optional()]) == 5
     assert len(package.extras["security"]) == 3
     assert len(package.extras["socks"]) == 2
 
@@ -141,7 +142,8 @@ def test_fallback_can_read_setup_to_get_dependencies():
     package = repo.package("sqlalchemy", "1.2.12")
 
     assert package.name == "sqlalchemy"
-    assert len(package.requires) == 0
+    assert len(package.requires) == 9
+    assert len([r for r in package.requires if r.is_optional()]) == 9
 
     assert package.extras == {
         "mssql_pymssql": [Dependency("pymssql", "*")],
@@ -162,7 +164,10 @@ def test_pypi_repository_supports_reading_bz2_files():
     package = repo.package("twisted", "18.9.0")
 
     assert package.name == "twisted"
-    assert sorted(package.requires, key=lambda r: r.name) == [
+    assert 28 == len(package.requires)
+    assert sorted(
+        [r for r in package.requires if not r.is_optional()], key=lambda r: r.name
+    ) == [
         Dependency("attrs", ">=17.4.0"),
         Dependency("Automat", ">=0.3.0"),
         Dependency("constantly", ">=15.1"),
@@ -193,12 +198,12 @@ def test_pypi_repository_supports_reading_bz2_files():
         )
 
 
-def test_invalid_versions_ignored():
+def test_invalid_versions_ignored(f):
     repo = MockRepository()
 
     # the json metadata for this package contains one malformed version
     # and a correct one.
-    packages = repo.find_packages("pygame-music-grid")
+    packages = repo.find_packages(f.create_dependency("pygame-music-grid", "*"))
     assert len(packages) == 1
 
 
@@ -225,9 +230,9 @@ def test_urls():
     assert "https://pypi.org/simple/" == repository.authenticated_url
 
 
-def test_use_pypi_pretty_name():
+def test_use_pypi_pretty_name(f):
     repo = MockRepository(fallback=True)
 
-    package = repo.find_packages("twisted")
+    package = repo.find_packages(f.create_dependency("twisted", "*"))
     assert len(package) == 1
     assert package[0].pretty_name == "Twisted"

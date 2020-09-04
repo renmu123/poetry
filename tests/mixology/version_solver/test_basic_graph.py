@@ -2,9 +2,9 @@ from ..helpers import add_to_repo
 from ..helpers import check_solver_result
 
 
-def test_simple_dependencies(root, provider, repo):
-    root.add_dependency("a", "1.0.0")
-    root.add_dependency("b", "1.0.0")
+def test_simple_dependencies(root, provider, repo, f):
+    root.add_dependency(f.create_dependency("a", "1.0.0"))
+    root.add_dependency(f.create_dependency("b", "1.0.0"))
 
     add_to_repo(repo, "a", "1.0.0", deps={"aa": "1.0.0", "ab": "1.0.0"})
     add_to_repo(repo, "b", "1.0.0", deps={"ba": "1.0.0", "bb": "1.0.0"})
@@ -27,9 +27,9 @@ def test_simple_dependencies(root, provider, repo):
     )
 
 
-def test_shared_dependencies_with_overlapping_constraints(root, provider, repo):
-    root.add_dependency("a", "1.0.0")
-    root.add_dependency("b", "1.0.0")
+def test_shared_dependencies_with_overlapping_constraints(root, provider, repo, f):
+    root.add_dependency(f.create_dependency("a", "1.0.0"))
+    root.add_dependency(f.create_dependency("b", "1.0.0"))
 
     add_to_repo(repo, "a", "1.0.0", deps={"shared": ">=2.0.0 <4.0.0"})
     add_to_repo(repo, "b", "1.0.0", deps={"shared": ">=3.0.0 <5.0.0"})
@@ -43,10 +43,10 @@ def test_shared_dependencies_with_overlapping_constraints(root, provider, repo):
 
 
 def test_shared_dependency_where_dependent_version_affects_other_dependencies(
-    root, provider, repo
+    root, provider, repo, f
 ):
-    root.add_dependency("foo", "<=1.0.2")
-    root.add_dependency("bar", "1.0.0")
+    root.add_dependency(f.create_dependency("foo", "<=1.0.2"))
+    root.add_dependency(f.create_dependency("bar", "1.0.0"))
 
     add_to_repo(repo, "foo", "1.0.0")
     add_to_repo(repo, "foo", "1.0.1", deps={"bang": "1.0.0"})
@@ -62,8 +62,8 @@ def test_shared_dependency_where_dependent_version_affects_other_dependencies(
     )
 
 
-def test_circular_dependency(root, provider, repo):
-    root.add_dependency("foo", "1.0.0")
+def test_circular_dependency(root, provider, repo, f):
+    root.add_dependency(f.create_dependency("foo", "1.0.0"))
 
     add_to_repo(repo, "foo", "1.0.0", deps={"bar": "1.0.0"})
     add_to_repo(repo, "bar", "1.0.0", deps={"foo": "1.0.0"})

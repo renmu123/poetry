@@ -153,3 +153,6 @@ class Factory(BaseFactory):
             cert=get_cert(auth_config, name),
             client_cert=get_client_cert(auth_config, name),
         )
+
+    def get_source_information(self, source_name):  # type: (str) -> Dict[str, str]
+        return {}

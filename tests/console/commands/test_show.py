@@ -1063,14 +1063,14 @@ pendulum 2.0.0 Pendulum package
     assert expected == tester.io.fetch_output()
 
 
-def test_show_tree(app, poetry, installed):
+def test_show_tree(app, poetry, installed, f):
     command = app.find("show")
     tester = CommandTester(command)
 
-    poetry.package.add_dependency("cachy", "^0.2.0")
+    poetry.package.add_dependency(f.create_dependency("cachy", "^0.2.0"))
 
     cachy2 = get_package("cachy", "0.2.0")
-    cachy2.add_dependency("msgpack-python", ">=0.5 <0.6")
+    cachy2.add_dependency(f.create_dependency("msgpack-python", ">=0.5 <0.6"))
 
     installed.add_package(cachy2)
 
