@@ -1,46 +1,43 @@
-# 
+# 介绍
 
-Poetry is a tool for dependency management and packaging in Python.
-It allows you to declare the libraries your project depends on and it will manage (install/update) them for you.
+Poetry 是一个 Python 的依赖管理和打包工具。
+它允许你为你的项目声明依赖库并对它们进行管理（安装/更新）。
 
 
-## System requirements
+## 系统要求
 
-Poetry requires Python 2.7 or 3.5+. It is multi-platform and the goal is to make it work equally well
-on Windows, Linux and OSX.
+Poetry 需要 Python 2.7 或者 3.5+ 。它是多平台的，目标是在 Windows, Linux, OSX 工作得一样好。
 
 !!! note
+    
+    Python 2.7 和 3.5 在下一个版本(1.2)将不会再被支持。
+    你可以考虑更新 Python 版本至支持的版本。
 
-    Python 2.7 and 3.5 will no longer be supported in the next feature release (1.2).
-    You should consider updating your Python version to a supported one.
 
+## 安装
 
-## Installation
 
 Poetry provides a custom installer that will install `poetry` isolated
-from the rest of your system by vendorizing its dependencies. This is the
-recommended way of installing `poetry`.
+from the rest of your system by vendorizing its dependencies. 这是推荐安装 `poetry` 的方法。
 
-### osx / linux / bashonwindows install instructions
+### osx / linux / bashonwindows 安装说明
 ```bash
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ```
-### windows powershell install instructions
+### windows powershell 安装说明
 ```powershell
 (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python
 ```
 
 !!! note
+    
+    你只需要安装一次 Poetry。它会自动选择当前版本的 Python ，并使用它[创建 virtualenvs](/docs/managing-environments)
 
-    You only need to install Poetry once. It will automatically pick up the current
-    Python version and use it to [create virtualenvs](/docs/managing-environments) accordingly.
+安装程序会将 `poetry` 工具安装到 Poetry 的 `bin` 目录下。
+在 Unix 下，它位于 `$HOME/.poetry/bin`，在 Windows 下 位于 `%USERPROFILE%\.poetry\bin`。
 
-The installer installs the `poetry` tool to Poetry's `bin` directory.
-On Unix it is located at `$HOME/.poetry/bin` and on Windows at `%USERPROFILE%\.poetry\bin`.
-
-This directory will be in your `$PATH` environment variable,
-which means you can run them from the shell without further configuration.
-Open a new shell and type the following:
+该目录将会在你的 `$PATH` 环境变量中。这意味你无需进一步的配置就能在 shell 中使用。
+打开一个新的 shell 输入以下内容：
 
 ```bash
 poetry --version
@@ -56,22 +53,20 @@ python get-poetry.py --uninstall
 POETRY_UNINSTALL=1 python get-poetry.py
 ```
 
-By default, Poetry is installed into the user's platform-specific home directory. If you wish to change this, you may define the `POETRY_HOME` environment variable:
+默认 Poetry 将会安装在平台特定(platform-specific)的 home 目录下。如果你想更改这个设定，你可以定义 `POETRY_HOME` 环境变量：
 
 ```bash
 POETRY_HOME=/etc/poetry python get-poetry.py
 ```
 
-If you want to install prerelease versions, you can do so by passing `--preview` to `get-poetry.py`
-or by using the `POETRY_PREVIEW` environment variable:
+如果你想安装预发行版本，你可以传递 `--preview` 参数给 `get-poetry.py` 或者使用 `POETRY_PREVIEW` 环境变量：
 
 ```bash
 python get-poetry.py --preview
 POETRY_PREVIEW=1 python get-poetry.py
 ```
 
-Similarly, if you want to install a specific version, you can use `--version` or the `POETRY_VERSION`
-environment variable:
+同样，如果你想安装某个特定版本，你可以使用 `--version` 或者 `POETRY_VERSION` 环境变量：
 
 ```bash
 python get-poetry.py --version 0.12.0
@@ -80,44 +75,42 @@ POETRY_VERSION=0.12.0 python get-poetry.py
 
 !!!note
 
-    Note that the installer does not support Poetry releases < 0.12.0.
+    注意这个安装程序不支持小于 0.12.0 版本的 Poetry
 
 !!!note
-
-    The setup script must be able to find one of following executables in your shell's path environment:
+    
+    安装脚本必须能在你的 shell's path environment 下找到下列可执行文件之一：
 
     - `python` (which can be a py3 or py2 interpreter)
     - `python3`
     - `py.exe -3` (Windows)
     - `py.exe -2` (Windows)
 
-### Alternative installation methods (not recommended)
+### 替代安装方法（不推荐）
 
 !!!note
+    
+    使用其他安装方法将使 Poetry 一直使用安装的 Python 版本创建虚拟环境。
+    
+    所以，如果你想要使用不同 Python 版本并进行切换。你需要为每个 Python 版本安装 Poetry。
 
-    Using alternative installation methods will make Poetry always
-    use the Python version for which it has been installed to create
-    virtualenvs.
+#### 用 `pip` 进行安装
 
-    So, you will need to install Poetry for each Python version you
-    want to use and switch between them.
-
-#### Installing with `pip`
-
-Using `pip` to install Poetry is possible.
+使用 `pip` 安装 Poetry 也是可行的。
 
 ```bash
 pip install --user poetry
 ```
 
 !!!warning
+    
+    注意这还会安装 Poetry 的依赖，可能会和其他包引发冲突。
 
-    Be aware that it will also install Poetry's dependencies
-    which might cause conflicts with other packages.
+#### 用 `pipx` 进行安装
 
-#### Installing with `pipx`
-
-Using [`pipx`](https://github.com/cs01/pipx) to install Poetry is also possible. [pipx] is used to install Python CLI applications globally while still isolating them in virtual environments. This allows for clean upgrades and uninstalls. pipx supports Python 3.6 and later. If using an earlier version of Python, consider [pipsi](https://github.com/mitsuhiko/pipsi).
+使用 [`pipx`](https://github.com/cs01/pipx) 安装 Poetry 也是可行的。 
+`pipx` 用于安装全局 Python CLI 程序但仍能将他们隔离在虚拟环境。这样可以进行干净地更新和卸载。
+pipx 支持 Python 3.6 及更高版本。如果你使用更早期的 Python 版本，可以考虑使用 [pipsi](https://github.com/mitsuhiko/pipsi) 。
 
 ```bash
 pipx install poetry
@@ -134,22 +127,21 @@ pipx uninstall poetry
 [Github repository](https://github.com/cs01/pipx).
 
 
-## Updating `poetry`
+## 更新 `poetry`
 
-Updating Poetry to the latest stable version is as simple as calling the `self update` command.
+更新 Poetry 到最新版版就和调用 `self update` 命令一样简单。
 
 ```bash
 poetry self update
 ```
 
-If you want to install pre-release versions, you can use the `--preview` option.
+如果你想安装预发行版本，你可以使用 `--preview` 选项。
 
 ```bash
 poetry self update --preview
 ```
 
-And finally, if you want to install a specific version, you can pass it as an argument
-to `self update`.
+最后，如果你想安装特定版本，可以作为参数传递给 `self update`。
 
 ```bash
 poetry self update 0.8.0
@@ -157,18 +149,17 @@ poetry self update 0.8.0
 
 !!!note
 
-    The `self update` command will only work if you used the recommended
-    installer to install Poetry.
+    只有你使用推荐的安装方法安装 Poetry 时，`self update` 命令才会生效。
 
 !!!note
+    
+    如果你的 poetry 版本还小于 1.0，你可以改用 `poetry self:update`。
 
-    If you are still on poetry version < 1.0 use `poetry self:update` instead.
 
+## 为 Bash, Fish 或 Zsh 启用 tab 补全
 
-## Enable tab completion for Bash, Fish, or Zsh
-
-`poetry` supports generating completion scripts for Bash, Fish, and Zsh.
-See `poetry help completions` for full details, but the gist is as simple as using one of the following:
+`poetry` 支持为 Bash, Fish 和 Zsh generating completion scripts.
+查询 `poetry help completions` 获取全部资料，但是要点很简单，如下所示：
 
 
 ```bash
@@ -197,16 +188,17 @@ poetry completions zsh > ~/.zprezto/modules/completion/external/src/_poetry
 ```
 
 !!! note
-
+    
+    为了使更改生效，你可能需要重启 shell。
     You may need to restart your shell in order for the changes to take effect.
 
-For `zsh`, you must then add the following line in your `~/.zshrc` before `compinit`:
+对于 `zsh`， 你必须在 `~/.zshrc` 文件 `compinit` 前添加以下行： 
 
 ```bash
 fpath+=~/.zfunc
 ```
 
-For `oh-my-zsh`, you must then enable poetry in your `~/.zshrc` plugins
+对于 `oh-my-zsh`， 你必须在 `~/.zshrc` 插件中启用 `poetry`
 
 ```
 plugins(
